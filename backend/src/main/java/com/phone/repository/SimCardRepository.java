@@ -13,4 +13,5 @@ public interface SimCardRepository extends JpaRepository<SimCard, Long> {
     List<SimCard> findByForfait(String forfait);
     List<SimCard> findByIsAssigned(boolean isAssigned);
     List<SimCard> findByOperatorAndForfait(String operator, String forfait);
+    List<SimCard> findByDeletedFalse();
 } 

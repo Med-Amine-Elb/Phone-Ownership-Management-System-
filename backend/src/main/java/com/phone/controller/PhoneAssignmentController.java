@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import com.phone.repository.SystemUserRepository;
 
 @RestController
 @RequestMapping("/api/assignments")
@@ -14,6 +17,9 @@ import java.util.List;
 public class PhoneAssignmentController {
     @Autowired
     private PhoneAssignmentService phoneAssignmentService;
+
+    @Autowired
+    private SystemUserRepository systemUserRepository;
 
     @GetMapping
     public List<PhoneAssignment> getAllAssignments() {
@@ -58,11 +64,13 @@ public class PhoneAssignmentController {
     }
 
     @PostMapping
-    public ResponseEntity<PhoneAssignment> createAssignment(
-            @RequestBody PhoneAssignment assignment,
-            @RequestAttribute("currentUser") SystemUser currentUser) {
+    public ResponseEntity<PhoneAssignment> createAssignment(@RequestBody PhoneAssignment assignment) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        SystemUser user = systemUserRepository.findByUsername(username).orElse(null);
+        assignment.setAssignedBy(user);
         try {
-            PhoneAssignment createdAssignment = phoneAssignmentService.createAssignment(assignment, currentUser);
+            PhoneAssignment createdAssignment = phoneAssignmentService.createAssignment(assignment);
             return ResponseEntity.ok(createdAssignment);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();

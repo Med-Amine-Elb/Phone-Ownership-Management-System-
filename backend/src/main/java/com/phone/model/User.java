@@ -31,6 +31,9 @@ public class User {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
+    private boolean deleted = false;
+
     public enum UserStatus {
         ACTIVE,
         LEFT_COMPANY

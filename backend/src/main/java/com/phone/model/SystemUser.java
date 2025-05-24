@@ -28,6 +28,9 @@ public class SystemUser {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
+    private boolean deleted = false;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

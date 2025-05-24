@@ -15,6 +15,9 @@ public class Role {
     @Enumerated(EnumType.STRING)
     private RoleType name;
 
+    @Column(nullable = false)
+    private boolean deleted = false;
+
     public enum RoleType {
         ADMIN,
         ASSIGNER,

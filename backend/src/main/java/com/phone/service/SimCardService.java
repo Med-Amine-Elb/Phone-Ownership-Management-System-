@@ -64,7 +64,10 @@ public class SimCardService {
     }
 
     public void deleteSimCard(Long id) {
-        simCardRepository.deleteById(id);
+        simCardRepository.findById(id).ifPresent(simCard -> {
+            simCard.setDeleted(true);
+            simCardRepository.save(simCard);
+        });
     }
 
     public SimCard markAsAssigned(Long id) {

@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import com.phone.repository.SystemUserRepository;
 
 @RestController
 @RequestMapping("/api/sim-cards")
@@ -14,6 +17,9 @@ import java.util.List;
 public class SimCardController {
     @Autowired
     private SimCardService simCardService;
+
+    @Autowired
+    private SystemUserRepository systemUserRepository;
 
     @GetMapping
     public List<SimCard> getAllSimCards() {
@@ -55,8 +61,11 @@ public class SimCardController {
     }
 
     @PostMapping
-    public SimCard createSimCard(@RequestBody SimCard simCard, @RequestAttribute("currentUser") SystemUser currentUser) {
-        return simCardService.createSimCard(simCard, currentUser);
+    public SimCard createSimCard(@RequestBody SimCard simCard) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        SystemUser user = systemUserRepository.findByUsername(username).orElse(null);
+        return simCardService.createSimCard(simCard, user);
     }
 
     @PutMapping("/{id}")

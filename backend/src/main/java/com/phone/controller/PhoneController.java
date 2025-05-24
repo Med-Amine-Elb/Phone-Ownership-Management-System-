@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import com.phone.repository.SystemUserRepository;
 
 @RestController
 @RequestMapping("/api/phones")
@@ -14,6 +17,9 @@ import java.util.List;
 public class PhoneController {
     @Autowired
     private PhoneService phoneService;
+
+    @Autowired
+    private SystemUserRepository systemUserRepository;
 
     @GetMapping
     public List<Phone> getAllPhones() {
@@ -48,8 +54,11 @@ public class PhoneController {
     }
 
     @PostMapping
-    public Phone createPhone(@RequestBody Phone phone, @RequestAttribute("currentUser") SystemUser currentUser) {
-        return phoneService.createPhone(phone, currentUser);
+    public Phone createPhone(@RequestBody Phone phone) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        SystemUser user = systemUserRepository.findByUsername(username).orElse(null);
+        return phoneService.createPhone(phone, user);
     }
 
     @PutMapping("/{id}")

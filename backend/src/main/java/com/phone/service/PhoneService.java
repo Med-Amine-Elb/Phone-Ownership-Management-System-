@@ -16,7 +16,7 @@ public class PhoneService {
     private PhoneRepository phoneRepository;
 
     public List<Phone> getAllPhones() {
-        return phoneRepository.findAll();
+        return phoneRepository.findByDeletedFalse();
     }
 
     public Optional<Phone> getPhoneById(Long id) {
@@ -56,7 +56,10 @@ public class PhoneService {
     }
 
     public void deletePhone(Long id) {
-        phoneRepository.deleteById(id);
+        phoneRepository.findById(id).ifPresent(phone -> {
+            phone.setDeleted(true);
+            phoneRepository.save(phone);
+        });
     }
 
     public Phone deactivatePhone(Long id) {

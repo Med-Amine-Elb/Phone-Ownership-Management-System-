@@ -11,4 +11,5 @@ public interface PhoneRepository extends JpaRepository<Phone, Long> {
     List<Phone> findByModel(String model);
     List<Phone> findByIsActive(boolean isActive);
     List<Phone> findByBrandAndModel(String brand, String model);
+    List<Phone> findByDeletedFalse();
 } 

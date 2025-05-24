@@ -12,4 +12,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByDepartment(String department);
     List<User> findByStatus(User.UserStatus status);
     List<User> findByFirstNameContainingOrLastNameContaining(String firstName, String lastName);
+    List<User> findByDeletedFalse();
 } 

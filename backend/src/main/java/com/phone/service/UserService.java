@@ -56,7 +56,10 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        userRepository.findById(id).ifPresent(user -> {
+            user.setDeleted(true);
+            userRepository.save(user);
+        });
     }
 
     public User markUserAsLeft(Long id) {

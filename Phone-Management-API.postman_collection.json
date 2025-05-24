@@ -1,0 +1,513 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890",
+		"name": "Phone Management API",
+		"description": "Collection for testing Phone & SIM Ownership Management System API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login as Assigner",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"assigner\",\n    \"password\": \"assigner123\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/login",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Login as Admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/login",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"url": {
+							"raw": "http://localhost:8080/api/auth/logout",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "auth", "logout"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Assignments (ASSIGNER & ADMIN)",
+			"item": [
+				{
+					"name": "Get All Assignments",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8080/api/assignments",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "assignments"]
+						}
+					}
+				},
+				{
+					"name": "Get Assignment by ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8080/api/assignments/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "assignments", "1"]
+						}
+					}
+				},
+				{
+					"name": "Create Assignment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": 1,\n    \"phoneId\": 1,\n    \"simCardId\": 1,\n    \"pvFileUrl\": \"test.pdf\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/assignments",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "assignments"]
+						}
+					}
+				},
+				{
+					"name": "Update Assignment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"INACTIVE\",\n    \"pvFileUrl\": \"updated.pdf\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/assignments/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "assignments", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Assignment",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "http://localhost:8080/api/assignments/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "assignments", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Phones (ASSIGNER & ADMIN)",
+			"item": [
+				{
+					"name": "Get All Phones",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8080/api/phones",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "phones"]
+						}
+					}
+				},
+				{
+					"name": "Get Phone by ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8080/api/phones/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "phones", "1"]
+						}
+					}
+				},
+				{
+					"name": "Search Phones by Brand",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8080/api/phones/search?brand=Brand1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "phones", "search"],
+							"query": [
+								{
+									"key": "brand",
+									"value": "Brand1"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Phones (ADMIN Only)",
+			"item": [
+				{
+					"name": "Create Phone",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"brand\": \"Test Brand\",\n    \"model\": \"Test Model\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/phones",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "phones"]
+						}
+					}
+				},
+				{
+					"name": "Update Phone",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"brand\": \"Updated Brand\",\n    \"model\": \"Updated Model\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/phones/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "phones", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Phone",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "http://localhost:8080/api/phones/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "phones", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "SIM Cards (ASSIGNER & ADMIN)",
+			"item": [
+				{
+					"name": "Get All SIM Cards",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8080/api/simcards",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "simcards"]
+						}
+					}
+				},
+				{
+					"name": "Get SIM Card by ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8080/api/simcards/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "simcards", "1"]
+						}
+					}
+				},
+				{
+					"name": "Search SIM Cards by Number",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8080/api/simcards/search?number=1000000001",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "simcards", "search"],
+							"query": [
+								{
+									"key": "number",
+									"value": "1000000001"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "SIM Cards (ADMIN Only)",
+			"item": [
+				{
+					"name": "Create SIM Card",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"number\": \"1234567890\",\n    \"ssid\": \"TEST-SIM\",\n    \"pinCode\": \"1234\",\n    \"pukCode\": \"5678\",\n    \"forfait\": \"Test\",\n    \"operator\": \"Test Operator\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/simcards",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "simcards"]
+						}
+					}
+				},
+				{
+					"name": "Update SIM Card",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"forfait\": \"Premium\",\n    \"operator\": \"Updated Operator\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/simcards/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "simcards", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete SIM Card",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "http://localhost:8080/api/simcards/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "simcards", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Users (ASSIGNER & ADMIN)",
+			"item": [
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8080/api/users",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "users"]
+						}
+					}
+				},
+				{
+					"name": "Get User by ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8080/api/users/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "users", "1"]
+						}
+					}
+				},
+				{
+					"name": "Search Users by Department",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8080/api/users/department/IT",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "users", "department", "IT"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Users (ADMIN Only)",
+			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"Test\",\n    \"lastName\": \"User\",\n    \"email\": \"test.user@example.com\",\n    \"department\": \"IT\",\n    \"status\": \"ACTIVE\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/users",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "users"]
+						}
+					}
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"Updated\",\n    \"lastName\": \"User\",\n    \"department\": \"HR\",\n    \"status\": \"ACTIVE\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/users/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "users", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "http://localhost:8080/api/users/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "users", "1"]
+						}
+					}
+				},
+				{
+					"name": "Mark User as Left",
+					"request": {
+						"method": "PUT",
+						"url": {
+							"raw": "http://localhost:8080/api/users/1/left",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["api", "users", "1", "left"]
+						}
+					}
+				}
+			]
+		}
+	]
+} 

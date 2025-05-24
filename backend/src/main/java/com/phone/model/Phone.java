@@ -28,6 +28,9 @@ public class Phone {
     @JoinColumn(name = "created_by_user_id")
     private SystemUser createdBy;
 
+    @Column(nullable = false)
+    private boolean deleted = false;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

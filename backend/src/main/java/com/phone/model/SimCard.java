@@ -33,6 +33,9 @@ public class SimCard {
     @Column(name = "is_assigned", nullable = false)
     private boolean isAssigned = false;
 
+    @Column(nullable = false)
+    private boolean deleted = false;
+
     @ManyToOne
     @JoinColumn(name = "created_by_user_id")
     private SystemUser createdBy;

@@ -53,7 +53,7 @@ public class PhoneAssignmentService {
         return phoneAssignmentRepository.findByStatus(PhoneAssignment.AssignmentStatus.RETURNED);
     }
 
-    public PhoneAssignment createAssignment(PhoneAssignment assignment, SystemUser assignedBy) {
+    public PhoneAssignment createAssignment(PhoneAssignment assignment) {
         // Validate phone and SIM card availability
         Phone phone = phoneService.getPhoneById(assignment.getPhone().getId())
                 .orElseThrow(() -> new RuntimeException("Phone not found"));
@@ -68,7 +68,6 @@ public class PhoneAssignmentService {
         }
 
         // Set assignment details
-        assignment.setAssignedBy(assignedBy);
         assignment.setStatus(PhoneAssignment.AssignmentStatus.ACTIVE);
         assignment.setAcquisitionDate(LocalDateTime.now());
         assignment.setNextUpgradeDate(assignment.getAcquisitionDate().plusYears(2));
@@ -76,7 +75,8 @@ public class PhoneAssignmentService {
         // Mark SIM card as assigned
         simCardService.markAsAssigned(simCard.getId());
 
-        return phoneAssignmentRepository.save(assignment);
+        PhoneAssignment saved = phoneAssignmentRepository.save(assignment);
+        return phoneAssignmentRepository.findById(saved.getId()).get();
     }
 
     public PhoneAssignment returnAssignment(Long id) {
