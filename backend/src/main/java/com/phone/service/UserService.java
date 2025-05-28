@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @Transactional
@@ -16,6 +18,36 @@ public class UserService {
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public Page<User> getUsers(Pageable pageable, String filterField, String filterValue) {
+        if (filterField != null && filterValue != null && !filterValue.isEmpty()) {
+            switch (filterField) {
+                case "firstName":
+                    return userRepository.findByFirstNameContainingIgnoreCaseAndDeletedFalse(filterValue, pageable);
+                case "lastName":
+                    return userRepository.findByLastNameContainingIgnoreCaseAndDeletedFalse(filterValue, pageable);
+                case "email":
+                    return userRepository.findByEmailContainingIgnoreCaseAndDeletedFalse(filterValue, pageable);
+                case "department":
+                    return userRepository.findByDepartmentContainingIgnoreCaseAndDeletedFalse(filterValue, pageable);
+                case "status":
+                    try {
+                        User.UserStatus status = User.UserStatus.valueOf(filterValue.toUpperCase());
+                        return userRepository.findByStatusAndDeletedFalse(status, pageable);
+                    } catch (IllegalArgumentException e) {
+                        // Handle invalid status value
+                        return Page.empty(pageable);
+                    }
+                // Add more filter cases as needed
+                default:
+                    // No valid filter field provided, return all non-deleted users with pagination/sorting
+                    return userRepository.findByDeletedFalse(pageable);
+            }
+        } else {
+            // No filter provided, return all non-deleted users with pagination/sorting
+            return userRepository.findByDeletedFalse(pageable);
+        }
     }
 
     public Optional<User> getUserById(Long id) {

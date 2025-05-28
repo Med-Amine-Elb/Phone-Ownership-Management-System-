@@ -1,5 +1,8 @@
 package com.phone.config;
 
+import com.phone.service.TokenBlocklistService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,6 +33,8 @@ import java.util.Arrays;
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+
     @Autowired
     private JwtUtil jwtUtil;
 
@@ -41,6 +46,9 @@ public class SecurityConfig {
 
     @Autowired
     private ApiAccessDeniedHandler apiAccessDeniedHandler;
+
+    @Autowired
+    private TokenBlocklistService tokenBlocklistService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
@@ -98,14 +106,6 @@ public class SecurityConfig {
                 })
                 .failureHandler((request, response, exception) -> {
                     response.setStatus(401);
-                })
-            .and()
-            .logout()
-                .logoutUrl("/api/auth/logout")
-                .logoutSuccessHandler((request, response, authentication) -> {
-                    response.setStatus(200);
-                    response.setContentType("application/json");
-                    objectMapper.writeValue(response.getWriter(), java.util.Collections.singletonMap("message", "Logged out successfully"));
                 });
         
         return http.build();

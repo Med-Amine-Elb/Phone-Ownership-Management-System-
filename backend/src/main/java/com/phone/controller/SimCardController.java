@@ -10,6 +10,10 @@ import java.util.List;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.phone.repository.SystemUserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @RestController
 @RequestMapping("/api/sim-cards")
@@ -22,57 +26,70 @@ public class SimCardController {
     private SystemUserRepository systemUserRepository;
 
     @GetMapping
-    public List<SimCard> getAllSimCards() {
-        return simCardService.getAllSimCards();
+    public ResponseEntity<Page<com.phone.dto.SimCardDto>> getAllSimCards(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id,asc") String[] sort,
+            @RequestParam(required = false) String filterField,
+            @RequestParam(required = false) String filterValue) {
+
+        Sort.Direction direction = Sort.Direction.fromString(sort[1]);
+        Sort.Order order = new Sort.Order(direction, sort[0]);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(order));
+
+        Page<SimCard> simCardsPage = simCardService.getSimCards(
+                pageable, filterField, filterValue);
+
+        return ResponseEntity.ok(simCardsPage.map(SimCard::toDto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SimCard> getSimCardById(@PathVariable Long id) {
+    public ResponseEntity<com.phone.dto.SimCardDto> getSimCardById(@PathVariable Long id) {
         return simCardService.getSimCardById(id)
-                .map(ResponseEntity::ok)
+                .map(s -> ResponseEntity.ok(SimCard.toDto(s)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/number/{number}")
-    public ResponseEntity<SimCard> getSimCardByNumber(@PathVariable String number) {
+    public ResponseEntity<com.phone.dto.SimCardDto> getSimCardByNumber(@PathVariable String number) {
         return simCardService.getSimCardByNumber(number)
-                .map(ResponseEntity::ok)
+                .map(s -> ResponseEntity.ok(SimCard.toDto(s)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/operator/{operator}")
-    public List<SimCard> getSimCardsByOperator(@PathVariable String operator) {
-        return simCardService.getSimCardsByOperator(operator);
+    public List<com.phone.dto.SimCardDto> getSimCardsByOperator(@PathVariable String operator) {
+        return SimCard.toDtoList(simCardService.getSimCardsByOperator(operator));
     }
 
     @GetMapping("/forfait/{forfait}")
-    public List<SimCard> getSimCardsByForfait(@PathVariable String forfait) {
-        return simCardService.getSimCardsByForfait(forfait);
+    public List<com.phone.dto.SimCardDto> getSimCardsByForfait(@PathVariable String forfait) {
+        return SimCard.toDtoList(simCardService.getSimCardsByForfait(forfait));
     }
 
     @GetMapping("/assigned")
-    public List<SimCard> getAssignedSimCards() {
-        return simCardService.getAssignedSimCards();
+    public List<com.phone.dto.SimCardDto> getAssignedSimCards() {
+        return SimCard.toDtoList(simCardService.getAssignedSimCards());
     }
 
     @GetMapping("/unassigned")
-    public List<SimCard> getUnassignedSimCards() {
-        return simCardService.getUnassignedSimCards();
+    public List<com.phone.dto.SimCardDto> getUnassignedSimCards() {
+        return SimCard.toDtoList(simCardService.getUnassignedSimCards());
     }
 
     @PostMapping
-    public SimCard createSimCard(@RequestBody SimCard simCard) {
+    public com.phone.dto.SimCardDto createSimCard(@RequestBody com.phone.model.SimCard simCard) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         SystemUser user = systemUserRepository.findByUsername(username).orElse(null);
-        return simCardService.createSimCard(simCard, user);
+        return SimCard.toDto(simCardService.createSimCard(simCard, user));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SimCard> updateSimCard(@PathVariable Long id, @RequestBody SimCard simCard) {
+    public ResponseEntity<com.phone.dto.SimCardDto> updateSimCard(@PathVariable Long id, @RequestBody com.phone.model.SimCard simCard) {
         try {
-            SimCard updatedSimCard = simCardService.updateSimCard(id, simCard);
-            return ResponseEntity.ok(updatedSimCard);
+            com.phone.model.SimCard updatedSimCard = simCardService.updateSimCard(id, simCard);
+            return ResponseEntity.ok(SimCard.toDto(updatedSimCard));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
@@ -89,20 +106,20 @@ public class SimCardController {
     }
 
     @PutMapping("/{id}/mark-assigned")
-    public ResponseEntity<SimCard> markAsAssigned(@PathVariable Long id) {
+    public ResponseEntity<com.phone.dto.SimCardDto> markAsAssigned(@PathVariable Long id) {
         try {
-            SimCard updatedSimCard = simCardService.markAsAssigned(id);
-            return ResponseEntity.ok(updatedSimCard);
+            com.phone.model.SimCard updatedSimCard = simCardService.markAsAssigned(id);
+            return ResponseEntity.ok(SimCard.toDto(updatedSimCard));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @PutMapping("/{id}/mark-unassigned")
-    public ResponseEntity<SimCard> markAsUnassigned(@PathVariable Long id) {
+    public ResponseEntity<com.phone.dto.SimCardDto> markAsUnassigned(@PathVariable Long id) {
         try {
-            SimCard updatedSimCard = simCardService.markAsUnassigned(id);
-            return ResponseEntity.ok(updatedSimCard);
+            com.phone.model.SimCard updatedSimCard = simCardService.markAsUnassigned(id);
+            return ResponseEntity.ok(SimCard.toDto(updatedSimCard));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }

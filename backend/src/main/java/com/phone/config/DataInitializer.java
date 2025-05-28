@@ -25,13 +25,17 @@ public class DataInitializer {
     ) {
         return args -> {
             // Create Roles
-            Role adminRole = new Role();
-            adminRole.setName(Role.RoleType.ADMIN);
-            roleRepository.save(adminRole);
+            Role adminRole = roleRepository.findByName(Role.RoleType.ADMIN).orElseGet(() -> {
+                Role role = new Role();
+                role.setName(Role.RoleType.ADMIN);
+                return roleRepository.save(role);
+            });
 
-            Role assignerRole = new Role();
-            assignerRole.setName(Role.RoleType.ASSIGNER);
-            roleRepository.save(assignerRole);
+            Role assignerRole = roleRepository.findByName(Role.RoleType.ASSIGNER).orElseGet(() -> {
+                Role role = new Role();
+                role.setName(Role.RoleType.ASSIGNER);
+                return roleRepository.save(role);
+            });
 
             // Create SystemUsers
             SystemUser admin = new SystemUser();

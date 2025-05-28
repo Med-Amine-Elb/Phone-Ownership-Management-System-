@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import com.phone.service.TokenBlocklistService;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -23,6 +25,9 @@ public class AuthController {
 
     @Autowired
     private SystemUserRepository systemUserRepository;
+
+    @Autowired
+    private TokenBlocklistService tokenBlocklistService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
@@ -48,5 +53,15 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Invalid username or password");
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            tokenBlocklistService.blocklistToken(token);
+        }
+        return ResponseEntity.ok(java.util.Collections.singletonMap("message", "Logged out successfully"));
     }
 } 

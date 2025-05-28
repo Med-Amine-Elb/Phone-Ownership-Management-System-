@@ -49,4 +49,39 @@ public class AuditLog {
     protected void onCreate() {
         timestamp = LocalDateTime.now();
     }
+
+    /**
+     * Converts an AuditLog entity to an AuditLogDto.
+     * @param auditLog The AuditLog entity.
+     * @return The corresponding AuditLogDto, or null if the input is null.
+     */
+    public static com.phone.dto.AuditLogDto toDto(AuditLog auditLog) {
+        if (auditLog == null) return null;
+        com.phone.dto.AuditLogDto dto = new com.phone.dto.AuditLogDto();
+        dto.id = auditLog.getId();
+        dto.action = auditLog.getAction() != null ? auditLog.getAction().name() : null;
+        dto.entityType = auditLog.getEntityType();
+        dto.entityId = auditLog.getEntityId();
+        if (auditLog.getPerformedBy() != null) {
+            com.phone.dto.AuditLogDto.SimpleSystemUserDto userDto = new com.phone.dto.AuditLogDto.SimpleSystemUserDto();
+            userDto.id = auditLog.getPerformedBy().getId();
+            userDto.username = auditLog.getPerformedBy().getUsername();
+            dto.performedBy = userDto;
+        }
+        dto.timestamp = auditLog.getTimestamp();
+        return dto;
+    }
+
+    /**
+     * Converts a list of AuditLog entities to a list of AuditLogDtos.
+     * @param auditLogs The list of AuditLog entities.
+     * @return The corresponding list of AuditLogDtos.
+     */
+    public static java.util.List<com.phone.dto.AuditLogDto> toDtoList(java.util.List<AuditLog> auditLogs) {
+        java.util.List<com.phone.dto.AuditLogDto> list = new java.util.ArrayList<>();
+        for (AuditLog al : auditLogs) {
+            list.add(toDto(al));
+        }
+        return list;
+    }
 } 

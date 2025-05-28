@@ -46,6 +46,15 @@ public class JwtUtil {
         return extractAllClaims(token).get("role", String.class);
     }
 
+    /**
+     * Extracts the expiration date from a JWT.
+     * @param token The JWT string.
+     * @return The expiration date.
+     */
+    public java.util.Date extractExpirationDate(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);

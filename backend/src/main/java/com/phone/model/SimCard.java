@@ -47,4 +47,33 @@ public class SimCard {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
+
+    /**
+     * Converts a SimCard entity to a SimCardDto.
+     * @param simCard The SimCard entity.
+     * @return The corresponding SimCardDto, or null if the input is null.
+     */
+    public static com.phone.dto.SimCardDto toDto(SimCard simCard) {
+        if (simCard == null) return null;
+        com.phone.dto.SimCardDto dto = new com.phone.dto.SimCardDto();
+        dto.id = simCard.getId();
+        dto.number = simCard.getNumber();
+        dto.operator = simCard.getOperator();
+        dto.forfait = simCard.getForfait();
+        dto.assigned = simCard.isAssigned();
+        return dto;
+    }
+
+    /**
+     * Converts a list of SimCard entities to a list of SimCardDtos.
+     * @param simCards The list of SimCard entities.
+     * @return The corresponding list of SimCardDtos.
+     */
+    public static java.util.List<com.phone.dto.SimCardDto> toDtoList(java.util.List<SimCard> simCards) {
+        java.util.List<com.phone.dto.SimCardDto> list = new java.util.ArrayList<>();
+        for (SimCard s : simCards) {
+            list.add(toDto(s));
+        }
+        return list;
+    }
 } 

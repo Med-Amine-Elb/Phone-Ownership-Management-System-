@@ -46,4 +46,33 @@ public class User {
             status = UserStatus.ACTIVE;
         }
     }
+
+    /**
+     * Converts a User entity to a UserDto.
+     * @param user The User entity.
+     * @return The corresponding UserDto, or null if the input is null.
+     */
+    public static com.phone.dto.UserDto toDto(User user) {
+        if (user == null) return null;
+        com.phone.dto.UserDto dto = new com.phone.dto.UserDto();
+        dto.id = user.getId();
+        dto.firstName = user.getFirstName();
+        dto.lastName = user.getLastName();
+        dto.department = user.getDepartment();
+        dto.status = user.getStatus() != null ? user.getStatus().name() : null;
+        return dto;
+    }
+
+    /**
+     * Converts a list of User entities to a list of UserDtos.
+     * @param users The list of User entities.
+     * @return The corresponding list of UserDtos.
+     */
+    public static java.util.List<com.phone.dto.UserDto> toDtoList(java.util.List<User> users) {
+        java.util.List<com.phone.dto.UserDto> list = new java.util.ArrayList<>();
+        for (User u : users) {
+            list.add(toDto(u));
+        }
+        return list;
+    }
 } 

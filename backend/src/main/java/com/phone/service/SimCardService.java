@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @Transactional
@@ -17,6 +19,34 @@ public class SimCardService {
 
     public List<SimCard> getAllSimCards() {
         return simCardRepository.findAll();
+    }
+
+    public Page<SimCard> getSimCards(Pageable pageable, String filterField, String filterValue) {
+        if (filterField != null && filterValue != null && !filterValue.isEmpty()) {
+            switch (filterField) {
+                case "number":
+                    return simCardRepository.findByNumberContainingIgnoreCaseAndDeletedFalse(filterValue, pageable);
+                case "operator":
+                    return simCardRepository.findByOperatorContainingIgnoreCaseAndDeletedFalse(filterValue, pageable);
+                case "forfait":
+                    return simCardRepository.findByForfaitContainingIgnoreCaseAndDeletedFalse(filterValue, pageable);
+                case "assigned":
+                    try {
+                        boolean isAssigned = Boolean.parseBoolean(filterValue);
+                        return simCardRepository.findByIsAssignedAndDeletedFalse(isAssigned, pageable);
+                    } catch (IllegalArgumentException e) {
+                        // Handle invalid boolean value for assigned filter
+                        return Page.empty(pageable);
+                    }
+                // Add more filter cases as needed
+                default:
+                    // No valid filter field provided, return all non-deleted sim cards with pagination/sorting
+                    return simCardRepository.findByDeletedFalse(pageable);
+            }
+        } else {
+            // No filter provided, return all non-deleted sim cards with pagination/sorting
+            return simCardRepository.findByDeletedFalse(pageable);
+        }
     }
 
     public Optional<SimCard> getSimCardById(Long id) {

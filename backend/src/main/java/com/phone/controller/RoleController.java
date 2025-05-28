@@ -15,28 +15,28 @@ public class RoleController {
     private RoleRepository roleRepository;
 
     @GetMapping
-    public List<Role> getAllRoles() {
-        return roleRepository.findByDeletedFalse();
+    public List<com.phone.dto.RoleDto> getAllRoles() {
+        return com.phone.model.Role.toDtoList(roleRepository.findByDeletedFalse());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Role> getRoleById(@PathVariable Long id) {
+    public ResponseEntity<com.phone.dto.RoleDto> getRoleById(@PathVariable Long id) {
         return roleRepository.findById(id)
-                .map(ResponseEntity::ok)
+                .map(r -> ResponseEntity.ok(com.phone.model.Role.toDto(r)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Role createRole(@RequestBody Role role) {
-        return roleRepository.save(role);
+    public com.phone.dto.RoleDto createRole(@RequestBody com.phone.model.Role role) {
+        return com.phone.model.Role.toDto(roleRepository.save(role));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Role> updateRole(@PathVariable Long id, @RequestBody Role roleDetails) {
+    public ResponseEntity<com.phone.dto.RoleDto> updateRole(@PathVariable Long id, @RequestBody com.phone.model.Role roleDetails) {
         return roleRepository.findById(id)
                 .map(role -> {
                     role.setName(roleDetails.getName());
-                    return ResponseEntity.ok(roleRepository.save(role));
+                    return ResponseEntity.ok(com.phone.model.Role.toDto(roleRepository.save(role)));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }

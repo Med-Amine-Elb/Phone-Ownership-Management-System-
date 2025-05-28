@@ -15,31 +15,31 @@ public class SystemUserController {
     private SystemUserRepository systemUserRepository;
 
     @GetMapping
-    public List<SystemUser> getAllSystemUsers() {
-        return systemUserRepository.findByDeletedFalse();
+    public List<com.phone.dto.SystemUserDto> getAllSystemUsers() {
+        return SystemUser.toDtoList(systemUserRepository.findByDeletedFalse());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SystemUser> getSystemUserById(@PathVariable Long id) {
+    public ResponseEntity<com.phone.dto.SystemUserDto> getSystemUserById(@PathVariable Long id) {
         return systemUserRepository.findById(id)
-                .map(ResponseEntity::ok)
+                .map(u -> ResponseEntity.ok(SystemUser.toDto(u)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public SystemUser createSystemUser(@RequestBody SystemUser systemUser) {
-        return systemUserRepository.save(systemUser);
+    public com.phone.dto.SystemUserDto createSystemUser(@RequestBody com.phone.model.SystemUser systemUser) {
+        return SystemUser.toDto(systemUserRepository.save(systemUser));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SystemUser> updateSystemUser(@PathVariable Long id, @RequestBody SystemUser userDetails) {
+    public ResponseEntity<com.phone.dto.SystemUserDto> updateSystemUser(@PathVariable Long id, @RequestBody com.phone.model.SystemUser userDetails) {
         return systemUserRepository.findById(id)
                 .map(user -> {
                     user.setUsername(userDetails.getUsername());
                     user.setEmail(userDetails.getEmail());
                     user.setPasswordHash(userDetails.getPasswordHash());
                     user.setRole(userDetails.getRole());
-                    return ResponseEntity.ok(systemUserRepository.save(user));
+                    return ResponseEntity.ok(SystemUser.toDto(systemUserRepository.save(user)));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }

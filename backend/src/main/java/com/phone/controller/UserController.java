@@ -6,6 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @RestController
 @RequestMapping("/api/users")
@@ -15,49 +19,62 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<Page<com.phone.dto.UserDto>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id,asc") String[] sort,
+            @RequestParam(required = false) String filterField,
+            @RequestParam(required = false) String filterValue) {
+
+        Sort.Direction direction = Sort.Direction.fromString(sort[1]);
+        Sort.Order order = new Sort.Order(direction, sort[0]);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(order));
+
+        Page<User> usersPage = userService.getUsers(
+                pageable, filterField, filterValue);
+
+        return ResponseEntity.ok(usersPage.map(User::toDto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    public ResponseEntity<com.phone.dto.UserDto> getUserById(@PathVariable Long id) {
         return userService.getUserById(id)
-                .map(ResponseEntity::ok)
+                .map(u -> ResponseEntity.ok(User.toDto(u)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
+    public ResponseEntity<com.phone.dto.UserDto> getUserByEmail(@PathVariable String email) {
         return userService.getUserByEmail(email)
-                .map(ResponseEntity::ok)
+                .map(u -> ResponseEntity.ok(User.toDto(u)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/department/{department}")
-    public List<User> getUsersByDepartment(@PathVariable String department) {
-        return userService.getUsersByDepartment(department);
+    public List<com.phone.dto.UserDto> getUsersByDepartment(@PathVariable String department) {
+        return User.toDtoList(userService.getUsersByDepartment(department));
     }
 
     @GetMapping("/status/{status}")
-    public List<User> getUsersByStatus(@PathVariable User.UserStatus status) {
-        return userService.getUsersByStatus(status);
+    public List<com.phone.dto.UserDto> getUsersByStatus(@PathVariable com.phone.model.User.UserStatus status) {
+        return User.toDtoList(userService.getUsersByStatus(status));
     }
 
     @GetMapping("/search")
-    public List<User> searchUsers(@RequestParam String query) {
-        return userService.searchUsers(query);
+    public List<com.phone.dto.UserDto> searchUsers(@RequestParam String query) {
+        return User.toDtoList(userService.searchUsers(query));
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
+    public com.phone.dto.UserDto createUser(@RequestBody com.phone.model.User user) {
+        return User.toDto(userService.createUser(user));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
+    public ResponseEntity<com.phone.dto.UserDto> updateUser(@PathVariable Long id, @RequestBody com.phone.model.User user) {
         try {
-            User updatedUser = userService.updateUser(id, user);
-            return ResponseEntity.ok(updatedUser);
+            com.phone.model.User updatedUser = userService.updateUser(id, user);
+            return ResponseEntity.ok(User.toDto(updatedUser));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
@@ -74,10 +91,10 @@ public class UserController {
     }
 
     @PutMapping("/{id}/mark-left")
-    public ResponseEntity<User> markUserAsLeft(@PathVariable Long id) {
+    public ResponseEntity<com.phone.dto.UserDto> markUserAsLeft(@PathVariable Long id) {
         try {
-            User updatedUser = userService.markUserAsLeft(id);
-            return ResponseEntity.ok(updatedUser);
+            com.phone.model.User updatedUser = userService.markUserAsLeft(id);
+            return ResponseEntity.ok(User.toDto(updatedUser));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
