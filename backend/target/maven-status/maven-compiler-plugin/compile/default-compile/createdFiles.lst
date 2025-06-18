@@ -29,6 +29,7 @@ com\phone\dto\AssignmentHistoryDto$SimpleSystemUserDto.class
 com\phone\service\SimCardService.class
 com\phone\model\AssignmentHistory.class
 com\phone\PhoneManagementApplication.class
+com\phone\service\SystemUserService.class
 com\phone\model\User.class
 com\phone\dto\PhoneAssignmentDto$SimpleSystemUserDto.class
 com\phone\model\SystemUser.class
@@ -46,11 +47,13 @@ com\phone\model\PhoneAssignment$AssignmentStatus.class
 com\phone\controller\PhoneController.class
 com\phone\model\PhoneAssignment.class
 com\phone\model\ReminderQueue.class
+com\phone\dto\CreateSystemUserDto.class
 com\phone\controller\SystemUserController.class
 com\phone\service\UserService.class
 com\phone\model\Notification.class
 com\phone\controller\AuditLogController.class
 com\phone\security\JwtUtil.class
+com\phone\dto\UpdateSystemUserDto.class
 com\phone\security\JwtAuthenticationFilter.class
 com\phone\dto\PhoneAssignmentDto$SimpleUserDto.class
 com\phone\repository\SimCardRepository.class

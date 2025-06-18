@@ -35,4 +35,31 @@ public class SystemUser {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
+
+    /**
+     * Converts a SystemUser entity to a SystemUserDto.
+     * @param user The SystemUser entity.
+     * @return The corresponding SystemUserDto, or null if the input is null.
+     */
+    public static com.phone.dto.SystemUserDto toDto(SystemUser user) {
+        if (user == null) return null;
+        com.phone.dto.SystemUserDto dto = new com.phone.dto.SystemUserDto();
+        dto.id = user.getId();
+        dto.username = user.getUsername();
+        dto.role = user.getRole() != null ? user.getRole().getName().name() : null;
+        return dto;
+    }
+
+    /**
+     * Converts a list of SystemUser entities to a list of SystemUserDtos.
+     * @param users The list of SystemUser entities.
+     * @return The corresponding list of SystemUserDtos.
+     */
+    public static java.util.List<com.phone.dto.SystemUserDto> toDtoList(java.util.List<SystemUser> users) {
+        java.util.List<com.phone.dto.SystemUserDto> list = new java.util.ArrayList<>();
+        for (SystemUser u : users) {
+            list.add(toDto(u));
+        }
+        return list;
+    }
 } 
